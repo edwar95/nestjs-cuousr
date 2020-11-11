@@ -1,0 +1,10 @@
+
+db:
+  host: localhost
+  username: root
+  password: root
+  syncronize: true
+
+jwt:
+  secrewt: topSecret51
+
