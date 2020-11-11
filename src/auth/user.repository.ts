@@ -13,7 +13,7 @@ export class UserRepository extends Repository<UserEntity> {
 
     user.username = authCredentialsDto.username;
     user.salt = salt;
-    user.password = await this._hasPassword(authCredentialsDto.password,salt);
+    user.password = await this._hashPassword(authCredentialsDto.password,salt);
 
     console.log(user.password)
     try {
@@ -27,7 +27,16 @@ export class UserRepository extends Repository<UserEntity> {
 
   }
 
-  private async _hasPassword(psw:string, salt:string):Promise<string>{
+  async validateUserPassword(authCredentialsDto: AuthCredentialsDto):Promise<string>{
+    const user: UserEntity = await this.findOne({username: authCredentialsDto.username});
+
+    if(user && await user.validatePassword(authCredentialsDto.password))
+      return user.username;
+
+    return null;
+  }
+
+  private async _hashPassword(psw:string, salt:string):Promise<string>{
     return bcrypt.hash(psw,salt)
   }
 
